@@ -1,26 +1,27 @@
-# PowerShell Script for Excel Workbook Manipulation
+# PowerShell Script for Excel Workbook and Active Directory Manipulation
 
-This PowerShell script is designed to manipulate an Excel workbook. It opens a specified workbook, checks if it's read-only, and if so, changes its attribute to normal. It then iterates over the worksheets and performs operations on the used range of each worksheet.
+This PowerShell script is designed to manipulate an Excel workbook and update Active Directory (AD) computer descriptions. It operates on a specified worksheet in the workbook and iterates over each row in the used range of the worksheet.
 
 ## Features
 
-- Opens a specified Excel workbook.
-- Checks if the workbook is read-only. If it is, it changes the workbook's attribute to normal.
-- Retrieves the number of worksheets in the workbook.
-- Iterates over each worksheet and performs operations on the used range of each worksheet.
-- For each row in the used range, it retrieves the values of certain columns and performs operations based on these values.
-- Updates a specific column with a specified value.
-- Saves and closes the workbook.
+- Iterates over each row in the used range of a specified worksheet.
+- Retrieves the hostname, serial number, tag code, and department from each row.
+- If the tag code or department is null, it skips the current row and continues with the next one.
+- Retrieves the AD computer object for the hostname.
+- If the computer is not found on AD, it skips the current row and continues with the next one.
+- Updates the AD computer description with the tag code, serial number, and department.
+- Updates a specific column in the worksheet with "Done" after successfully updating the AD computer description.
 
 ## Usage
 
 1. Replace the `$filePath` variable with the path to the Excel workbook you want to manipulate.
-2. Run the script in a PowerShell environment.
+2. Replace the `$credentials` variable with your AD credentials.
+3. Run the script in a PowerShell environment.
 
 ## Requirements
 
 - Excel must be installed on the machine where the script is run.
-- The user running the script must have the necessary permissions to change the attributes of the file and to perform operations on the Excel workbook.
+- The user running the script must have the necessary permissions to change the attributes of the file, perform operations on the Excel workbook, and update AD computer descriptions.
 
 ## Note
 
