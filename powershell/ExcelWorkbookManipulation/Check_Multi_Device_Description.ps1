@@ -58,7 +58,7 @@ Clear-Host;
 #endregion
 
 ## Comment if you already have RSAT
-Check-RSATComponents
+# Check-RSATComponents
 
 do {
     $isError = $false
@@ -144,13 +144,15 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
             $computerDescription = Get-ADComputer $hostname -Properties Description | Select Description
             if ($computerDescription -ne $null) {
                 Write-Host "$computerDescription`n" -BackgroundColor Green -ForegroundColor Yellow
-                # Update column H with the device description
-                $usedRange.Cells.Item($row, 8).Value2 = "Done"
+                # Update column I with the device description
+                $usedRange.Cells.Item($row, 9).Value2 = "Available"
             } else {
                 Write-Host "$hostname does not have description" -BackgroundColor Red -ForegroundColor White
-                # Update column H with the device description
-                $usedRange.Cells.Item($row, 8).Value2 = "Not Available"
+                # Update column I with the device description
+                $usedRange.Cells.Item($row, 9).Value2 = "Not Available"
             }
+
+
         } catch {
             Write-Host "$hostname is not on AD`n" -BackgroundColor Red -ForegroundColor White
         }
