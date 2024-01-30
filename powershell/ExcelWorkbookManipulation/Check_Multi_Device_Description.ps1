@@ -144,13 +144,13 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
             $computerDescription = Get-ADComputer $hostname -Properties Description | Select Description
             if ($computerDescription -ne $null) {
                 Write-Host "$computerDescription`n" -BackgroundColor Green -ForegroundColor Yellow
+                # Update column H with the device description
+                $usedRange.Cells.Item($row, 8).Value2 = "Done"
             } else {
                 Write-Host "$hostname does not have description" -BackgroundColor Red -ForegroundColor White
+                # Update column H with the device description
+                $usedRange.Cells.Item($row, 8).Value2 = "Not Available"
             }
-
-            # Update column C with the device description
-            $usedRange.Cells.Item($row, 4).Value2 = "Done"
-
         } catch {
             Write-Host "$hostname is not on AD`n" -BackgroundColor Red -ForegroundColor White
         }
