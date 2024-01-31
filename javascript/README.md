@@ -1,20 +1,23 @@
-# Search Tagcode from Serialnumber
-This script is designed to search for a serial number in a given Excel workbook. It operates on two worksheets: “Search” and “Desktop”.
+# Serial Number Matching Script Documentation
 
-## Functionality
-**The script performs the following steps:**
+This script is designed to match serial numbers from two different worksheets in an Excel workbook. The script operates in two stages to find the best match for each serial number in the "Search" worksheet.
 
-* Retrieves the “Search” and “Desktop” worksheets from the workbook.
-* Gets the used ranges from both worksheets.
-* Retrieves the values from these ranges.
-* Iterates over each cell in column B of the “Search” worksheet.
-* For each cell, it retrieves the serial number and checks if it matches any serial number in the “Desktop” worksheet.
-* If a match is found, it copies the corresponding tag code from the “Desktop” worksheet to column B of the “Search” worksheet.
-* If no match is found, it then checks if the last 7 digits of the serial number match any serial number in the “Desktop” worksheet.
-* If a match is found, it copies the corresponding tag code from the “Desktop” worksheet to column B of the “Search” worksheet.
-* If still no match is found, it finds the most similar serial number in the “Desktop” worksheet (i.e., the serial number that matches at least 6 characters with the search serial number).
-* If a similar serial number is found, it copies the corresponding tag code from the “Desktop” worksheet to column B of the “Search” worksheet.
+## How it Works
+
+1. The script first retrieves the "Search" and "Desktop" worksheets from the workbook.
+
+2. It then gets the used ranges from both worksheets and extracts their values.
+
+3. The script iterates over each cell in column A of the "Search" worksheet, treating each value as a serial number.
+
+4. For each serial number in the "Search" worksheet, the script checks each cell in column B of the "Desktop" worksheet for a match.
+
+5. If a match is found, the corresponding tag code (from column A of the "Desktop" worksheet) is copied to column B in the "Search" worksheet. The stage of the search (1 in this case) is recorded in column C.
+
+6. If no match is found in the first stage, the script proceeds to the second stage. Here, it looks for the most similar serial number by comparing each character of the serial numbers. However, it only considers those serial numbers whose last characters match with the last character of the search serial number.
+
+7. If the number of matching characters is greater than or equal to the length of the search serial number minus 1, the corresponding tag code is copied to column B in the "Search" worksheet, and the stage of the search (2 in this case) is recorded in column C.
+
 ## Usage
-This script is intended to be used in the Office Scripts for Excel environment. To use the script, simply open the Excel workbook of interest and run the script. The script will automatically perform the serial number search and update the “Search” worksheet with the corresponding tag codes.
 
-***Please note that the script assumes the serial numbers are located in column B of both worksheets and the tag codes are located in column A of the “Desktop” worksheet. If your data is arranged differently, you may need to adjust the script accordingly. 😊***
+This script is particularly useful in scenarios where you have a list of serial numbers in one worksheet ("Search") and you want to find and record the corresponding tag codes from another worksheet ("Desktop"). The two-stage approach helps to find the best match for each serial number, even if an exact match is not found in the first stage.
