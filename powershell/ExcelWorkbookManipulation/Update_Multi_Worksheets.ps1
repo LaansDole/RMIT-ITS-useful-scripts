@@ -39,57 +39,6 @@ function Check-RSATComponents {
     DISM.exe /Online /Get-CapabilityInfo /CapabilityName:Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0
 }
 
-<#
-function Process-CsvFile {
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$filePath
-    )
-
-    # Import the CSV file
-    $data = Import-Csv -Path $filePath
-
-    # Create an empty array to hold the result objects
-    $devices = @()
-
-    for($i = 0; $i -lt $data.Length; $i++) {
-
-        $inputString = $data[$i].'Name	S/N'
-        # Split the string into two parts on the EXTRA space
-        $parts = $inputString -split '\s+'
-
-        # The first part is the Name, the second part is the S/N
-        $name = $parts[0]
-        $sn = $parts[1]
-
-        # Create a custom object with the Name and S/N
-        $obj = New-Object PSObject -Property @{
-            Name = $name
-            SN = $sn
-        }
-
-        # Add the object to the result array
-        $devices += $obj
-    }
-
-    # Return the result array
-    return $devices
-}
-#>
-
-<#
-function Get-FilePath {
-    # Prompt the user to enter the file name
-    Write-Host "Enter the name of the file to import" -ForegroundColor Yellow -BackgroundColor DarkGreen
-    $fileName = Read-Host -Prompt "Path to file"
-
-    # Construct the full path to the file
-    $filePath = "C:\\HostnameLogs\\$fileName.txt"
-
-    return $filePath
-}
-#>
-
 # Function Show List Departments
 function Get-Department {
     param (
@@ -335,12 +284,13 @@ Clear-Host;
 #endregion
 
 ## Comment if you already have RSAT
-# Check-RSATComponents
+Check-RSATComponents
 
 do {
     $isError = $false
     # Get user credentials
     do {
+        Clear-Host
         $vnumber = Read-Host "Input your Vnumber"
     } 
     while ($vnumber.Length -eq 0)
@@ -360,7 +310,7 @@ do {
 while ($isError)
 
 # Replace with the file path that you want
-$filePath = "C:\Users\v122983\OneDrive - RMIT University\Documents\PDQ Cleanup Status Report.xlsx"
+$filePath = "C:\Excel\Excel File.xlsx"
 
 $ExcelObj = New-Object -comobject Excel.Application
 
@@ -427,8 +377,8 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
         Write-Host "Device Description: " + $description
     
 
-        # Update column D with the device description
-        $usedRange.Cells.Item($row, 4).Value2 = "Done"
+        # Update column H with Done
+        $usedRange.Cells.Item($row, 8).Value2 = "Done"
     }
 
     Write-Host "End of Worksheet: $currentsheet" -ForegroundColor Yellow -BackgroundColor DarkGreen
