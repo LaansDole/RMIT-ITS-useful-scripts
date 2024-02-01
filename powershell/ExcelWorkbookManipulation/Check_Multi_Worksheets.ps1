@@ -58,7 +58,7 @@ Clear-Host;
 #endregion
 
 ## Comment if you already have RSAT
-# Check-RSATComponents
+Check-RSATComponents
 
 do {
     $isError = $false
@@ -118,12 +118,6 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
     $currentsheet = $ExcelWorkSheet.Name
     Write-Host "Current Worksheet: $currentsheet" -ForegroundColor Yellow -BackgroundColor DarkGreen
 
-    if ($currentsheet -ne "Sheet1") {
-        break;
-    }
-
-    # $department = Get-Department
-
     $usedRange = $ExcelWorkSheet.UsedRange
 
     # Iterate over each row in the used range
@@ -142,7 +136,7 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
 
         try {
             $computerDescription = Get-ADComputer $hostname -Properties Description | Select Description
-            if ($computerDescription -ne $null) {
+            if ($computerDescription.Description -ne $null) {
                 Write-Host "$computerDescription`n" -BackgroundColor Green -ForegroundColor Yellow
                 # Update column I with the device description
                 $usedRange.Cells.Item($row, 9).Value2 = "Available"
