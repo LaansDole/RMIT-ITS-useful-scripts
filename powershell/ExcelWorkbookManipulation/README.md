@@ -1,4 +1,5 @@
 # PowerShell Script for Excel Workbook and Active Directory Manipulation
+![Multiple AD Description Checks](./MultiCheckADDescription.png)
 
 This PowerShell script is designed to manipulate an Excel workbook and update Active Directory (AD) computer descriptions. It operates on a specified worksheet in the workbook and iterates over each row in the used range of the worksheet.
 
