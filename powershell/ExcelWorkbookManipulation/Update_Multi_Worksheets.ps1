@@ -337,13 +337,13 @@ $sheetCount = $ExcelWorkBook.Sheets.Count
 # Print the number of worksheets
 Write-Host "The workbook contains $sheetCount worksheets." -ForegroundColor Yellow
 
-foreach ($sheet in $ExcelWorkBook.Sheets) {
+$sheetNames = @($ExcelWorkBook.Sheets | ForEach-Object { $_.Name })
+for ($i=0; $i -lt $sheetNames.Length; $i++) {
 
     Clear-Host
-        
-    $ExcelWorkSheet = $ExcelWorkBook.Sheets.Item($sheet.Name)
-    $currentsheet = $ExcelWorkSheet.Name
-    Write-Host "Current Worksheet: $currentsheet" -ForegroundColor Yellow -BackgroundColor DarkGreen
+
+    $currentSheet = $sheetNames[$i]
+    Write-Host "Current worksheet: $currentSheet"
 
     $department = Get-Department
 
@@ -382,7 +382,15 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
     }
 
     Write-Host "End of Worksheet: $currentsheet" -ForegroundColor Yellow -BackgroundColor DarkGreen
-    pause
+
+    if ($i -lt $sheetNames.Length - 1) {
+        $nextSheet = $sheetNames[$i + 1]
+        Write-Host "Next worksheet: $nextSheet"
+    }
+    $response = Read-Host "Do you want to continue? (yes/no)"
+    if ($response -eq "no") {
+        break
+    }
 
 }
 
