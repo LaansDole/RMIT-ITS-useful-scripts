@@ -198,7 +198,7 @@ function Get-Department {
             
                 }
                 '23' {
-                $department = 'VNM|Student Life.'
+                $department = 'VNM|Student Life'
             
                 }
                 '24' {
@@ -284,7 +284,7 @@ Clear-Host;
 #endregion
 
 ## Comment if you already have RSAT
-Check-RSATComponents
+# Check-RSATComponents
 
 do {
     $isError = $false
@@ -338,15 +338,18 @@ $sheetCount = $ExcelWorkBook.Sheets.Count
 Write-Host "The workbook contains $sheetCount worksheets." -ForegroundColor Yellow
 
 $sheetNames = @($ExcelWorkBook.Sheets | ForEach-Object { $_.Name })
-for ($i=0; $i -lt $sheetNames.Length; $i++) {
+# sheetName counter $i
+$i = 0
+
+foreach ($sheet in $ExcelWorkBook.Sheets) {
 
     Clear-Host
 
     $currentSheet = $sheetNames[$i]
-    Write-Host "Current worksheet: $currentSheet"
-
+    Write-Host "Current worksheet: $currentSheet" -ForegroundColor DarkGreen -BackgroundColor Yellow
     $department = Get-Department
 
+    $ExcelWorkSheet = $ExcelWorkBook.Sheets.Item($sheet.Name)
     $usedRange = $ExcelWorkSheet.UsedRange
 
     # Iterate over each row in the used range
@@ -385,8 +388,13 @@ for ($i=0; $i -lt $sheetNames.Length; $i++) {
 
     if ($i -lt $sheetNames.Length - 1) {
         $nextSheet = $sheetNames[$i + 1]
-        Write-Host "Next worksheet: $nextSheet"
+        Write-Host "Next worksheet: $nextSheet" -ForegroundColor DarkGreen -BackgroundColor Yellow
     }
+
+    if ($i -lt $sheetNames.Length) {
+        $i++;
+    }
+
     $response = Read-Host "Do you want to continue? (yes/no)"
     if ($response -eq "no") {
         break
