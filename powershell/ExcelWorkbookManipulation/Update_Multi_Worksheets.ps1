@@ -254,12 +254,13 @@ function Get-Department {
 function Update-AD-Description (
         [string]$computername, 
         [string]$tagcode, 
-        [string]$vnumber, 
+        [string]$vnumber,
+        [string]$vstaff,
         [string]$serialnumber,
         [string]$department
     ) {
 
-    $device_description = "Tagcode:" + $tagcode + "; SN:"+ $serialnumber + "; Department:" + $department + "; Updated by:" + $vnumber
+    $device_description = "Tagcode:" + $tagcode + "; SN:"+ $serialnumber + "; Department:" + $department + "; Used by:" + $vstaff + "; Updated by:" + $vnumber
     
     return $device_description
 }
@@ -310,7 +311,7 @@ do {
 while ($isError)
 
 # Replace with the file path that you want
-$filePath = "C:\Excel\Excel File.xlsx"
+$filePath = "C:\Users\v122983\OneDrive - RMIT University\Documents\Excel\(2024) SGS_Update_AD_Description.xlsx"
 
 $ExcelObj = New-Object -comobject Excel.Application
 
@@ -357,7 +358,7 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
     {
         # Get the values of column A
         $hostname = $usedRange.Cells.Item($row, 1).Value2
-            
+        
         # The end of the worksheet
         if ($hostname -eq $null) { break; }
 
@@ -367,14 +368,27 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
         # Get the values of column C
         $tagcode = $usedRange.Cells.Item($row, 3).Value2
 
+        # Get the values of column D
+        $vstaff = $usedRange.Cells.Item($row, 4).Value2
+
         # Print the values
-        Write-Output "Row ${row}: Host name = ${hostname}, S/N = ${sn}, Tag Code = ${tagcode}"
+        Write-Output "Row ${row}: Host name = ${hostname}, S/N = ${sn}, Tag Code = ${tagcode}, Used By = ${vstaff}"
+
         if ($tagcode -eq $null) { 
-            Write-Host "No TagCode, continue..." -ForegroundColor White -BackgroundColor Red 
+            Write-Host "${hostname} has no TagCode, continue..." -ForegroundColor White -BackgroundColor Red 
             continue; 
+        } else {
+            $tagcode = $tagcode.Trim()
         }
 
-        $device_description = Update-AD-Description -computername $hostname -tagcode $tagcode -vnumber $vnumber -serialnumber $sn -department $department
+        if ($vstaff -eq $null) { 
+            Write-Host "${hostname} has no Current User, continue..." -ForegroundColor White -BackgroundColor Red 
+            continue; 
+        } else {
+            $vstaff = $vstaff.Trim()
+        }
+
+        $device_description = Update-AD-Description -computername $hostname -tagcode $tagcode -vnumber $vnumber -vstaff $vstaff -serialnumber $sn -department $department
         Set-ADComputer -Identity $hostname -Description $device_description -Credential $credentials
         $description = Get-ADComputer $hostname -Properties Description | Select Description
         Write-Host "Device Description: " + $description
