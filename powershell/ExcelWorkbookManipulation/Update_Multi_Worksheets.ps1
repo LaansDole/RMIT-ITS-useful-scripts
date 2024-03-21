@@ -50,6 +50,7 @@ function Get-Department {
 
         Write-Host "================ Department ================"
         Write-Host " "
+        Write-Host "01: Press '0' for Location"
         Write-Host "01: Press '1' for SCD"
         Write-Host "02: Press '2' for TBS"
         Write-Host "03: Press '3' for SSET"
@@ -109,6 +110,10 @@ function Get-Department {
             $error = $false
             switch ($selection)
             {
+                '0' {
+                $department = ''
+            
+                }
                 '1' {
                 $department = 'VNM|School of Communication & Design'
             
@@ -257,11 +262,16 @@ function Update-AD-Description (
         [string]$vnumber,
         [string]$vstaff,
         [string]$serialnumber,
-        [string]$department
+        [string]$department,
+        [string]$location
     ) {
 
-    $device_description = "Tagcode:" + $tagcode + "; SN:"+ $serialnumber + "; Department:" + $department + "; Used by:" + $vstaff + "; Updated by:" + $vnumber
-    
+    if ($location.Length -ne 0) {
+        $device_description = "Tagcode:" + $tagcode + "; SN:"+ $serialnumber + "; Location:" + $location + "; Used by:" + $vstaff + "; Updated by:" + $vnumber
+    } else {
+        $device_description = "Tagcode:" + $tagcode + "; SN:"+ $serialnumber + "; Department:" + $department + "; Used by:" + $vstaff + "; Updated by:" + $vnumber
+    }
+
     return $device_description
 }
 
@@ -311,7 +321,7 @@ do {
 while ($isError)
 
 # Replace with the file path that you want
-$filePath = "C:\Users\v122983\OneDrive - RMIT University\Documents\Excel\(2024) SGS_Update_AD_Description.xlsx"
+$filePath = "C:\path\to\Excel\file.xlsx"
 
 $ExcelObj = New-Object -comobject Excel.Application
 
@@ -349,6 +359,13 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
     $currentSheet = $sheetNames[$i]
     Write-Host "Current worksheet: $currentSheet" -ForegroundColor DarkGreen -BackgroundColor Yellow
     $department = Get-Department
+
+    # Get the device's location instead of department
+    if ($department.Length -eq 0) {
+        do {
+        $location = Read-Host "Input device's Location"
+        } while ($location.Length -eq 0)
+    }
 
     $ExcelWorkSheet = $ExcelWorkBook.Sheets.Item($sheet.Name)
     $usedRange = $ExcelWorkSheet.UsedRange
@@ -388,23 +405,26 @@ foreach ($sheet in $ExcelWorkBook.Sheets) {
             $vstaff = $vstaff.Trim()
         }
 
-        $device_description = Update-AD-Description -computername $hostname -tagcode $tagcode -vnumber $vnumber -vstaff $vstaff -serialnumber $sn -department $department
+        # Set device's description and print the description
+        $device_description = Update-AD-Description -computername $hostname -tagcode $tagcode -vnumber $vnumber -vstaff $vstaff -serialnumber $sn -department $department -location $location
         Set-ADComputer -Identity $hostname -Description $device_description -Credential $credentials
         $description = Get-ADComputer $hostname -Properties Description | Select Description
         Write-Host "Device Description: " + $description
     
 
         # Update column H with Done
-        $usedRange.Cells.Item($row, 8).Value2 = "Done"
+        $usedRange.Cells.Item($row, 9).Value2 = "Done"
     }
 
     Write-Host "End of Worksheet: $currentsheet" -ForegroundColor Yellow -BackgroundColor DarkGreen
 
+    # Get the name of the next Worksheet
     if ($i -lt $sheetNames.Length - 1) {
         $nextSheet = $sheetNames[$i + 1]
         Write-Host "Next worksheet: $nextSheet" -ForegroundColor DarkGreen -BackgroundColor Yellow
     }
 
+    # Move to the next Worksheet
     if ($i -lt $sheetNames.Length) {
         $i++;
     }
